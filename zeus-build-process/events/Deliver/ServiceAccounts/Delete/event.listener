@@ -1,0 +1,1 @@
+{"name":"zeus-build/Deliver/ServiceAccounts/Delete","type":"Q","handler":"zeus-build-process/events/Deliver/ServiceAccounts/Delete/handler","description":"ServiceAccounts Delete Event Listener"}
