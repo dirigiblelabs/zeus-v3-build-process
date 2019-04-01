@@ -11,22 +11,26 @@ var SecretsUtils = require("zeus-build-process/utils/SecretsUtils");
 exports.onMessage = function(message) {
 	var entity = JSON.parse(message);
 	var secret = SecretsDao.get(entity.key.value);
-	var secretName = SecretsUtils.getSecretName(secret);
-	createSecret(secretName, secret.Username, secret.Password);
-	addSecretToServiceAccount(secret, secretName);
+	createSecret(secret);
+	addSecretToServiceAccount(secret);
 };
 
 exports.onError = function(error) {
 	console.error("Not Implemented: " + error);
 };
 
-function createSecret(name, username, passworrd) {
+function createSecret(secret) {
+	var secretName = SecretsUtils.getSecretName(secret);
+	var secretTypeName = SecretsUtils.getSecretTypeName(secret);
+	var annotations = {};
+	annotations["build.knative.dev/" + secretTypeName + "-0"] = secret.Host;
 	var builder = new SecretsBuilder();
-	builder.getMetadata().setName(name);
+	builder.getMetadata().setName(secretName);
+	builder.getMetadata().setAnnotations(annotations);
 	builder.setType("kubernetes.io/basic-auth");
 	builder.setData({
-		username: base64.encode(username),
-		passworrd: base64.encode(passworrd)
+		username: base64.encode(secret.Username),
+		passworrd: base64.encode(secret.Password)
 	});
 	
 	var entity = builder.build();
@@ -36,7 +40,8 @@ function createSecret(name, username, passworrd) {
 	return api.create(entity);
 }
 
-function addSecretToServiceAccount(secret, secretName) {
+function addSecretToServiceAccount(secret) {
+	var secretName = SecretsUtils.getSecretName(secret);
 	var serviceAccount = ServiceAccountsDao.get(secret.ServiceAccount);
 	var serviceAccountName = SecretsUtils.getServiceAccountName(serviceAccount);
 
