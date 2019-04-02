@@ -30,7 +30,7 @@ function createSecret(secret) {
 	builder.setType("kubernetes.io/basic-auth");
 	builder.setData({
 		username: base64.encode(secret.Username),
-		passworrd: base64.encode(secret.Password)
+		password: base64.encode(secret.Password)
 	});
 	
 	var entity = builder.build();
