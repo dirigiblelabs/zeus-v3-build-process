@@ -20,7 +20,7 @@ function createBuild(build) {
 	var serviceAccountName = SecretsUtils.getServiceAccountName(serviceAccount);
 
 	var builder = new BuildsBuilder();
-	builder.getMetadata().setName(serviceAccountName + "-build");
+	builder.getMetadata().setName(build.Name);
 	builder.getSpec().setServiceAccountName(serviceAccountName);
 	builder.getSpec().getSource().getGit().setUrl(build.GitUrl);
 	builder.getSpec().getSource().getGit().setRevision(build.GitRevision);
